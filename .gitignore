@@ -26,3 +26,9 @@ rust-toolchain.toml
 
 # Tex3DS output files
 *.t3d
+
+# Various dev tools
+.idea
+.bacon-locations
+bacon.toml
+justfile
