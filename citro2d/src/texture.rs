@@ -25,6 +25,7 @@ impl Tex {
         Self(c3d_tex)
     }
 
+    #[doc(alias = "C3D_TexUpload")]
     pub fn upload(&mut self, texture: &[u8]) {
         let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
