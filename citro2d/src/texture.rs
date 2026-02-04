@@ -43,7 +43,8 @@ fn bytes_per_pixel(fmt: ColorFormat) -> usize {
     use ColorFormat::*;
     match fmt {
         Rgba8 => 4,
-        Rgb8 | Rgba5551 | Rgb565 => 3,
+        Rgb8 => 3,
+        Rgba5551 | Rgb565 => 2,
         _ => todo!(),
     }
 }
