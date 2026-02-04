@@ -1,9 +1,9 @@
-use citro3d::texture::ColorFormat;
+use citro3d::texture::ColourFormat;
 use citro3d_sys::{C3D_Tex, C3D_TexInit};
 
 use crate::{
     Instance,
-    render::{Color, Target},
+    render::{Colour, Target},
     shapes::Shape,
 };
 
@@ -13,7 +13,7 @@ pub struct Tex(pub(crate) C3D_Tex);
 
 impl Tex {
     #[doc(alias = "C3D_TexInit")]
-    pub fn new(width: u16, height: u16, format: ColorFormat) -> Self {
+    pub fn new(width: u16, height: u16, format: ColourFormat) -> Self {
         let mut texture = std::mem::MaybeUninit::<citro3d_sys::C3D_Tex>::uninit();
         let init_success = unsafe { C3D_TexInit(texture.as_mut_ptr(), width, height, format as _) };
         assert!(init_success);
@@ -30,7 +30,7 @@ impl Tex {
         let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
-        let fmt = ColorFormat::try_from(fmt).unwrap();
+        let fmt = ColourFormat::try_from(fmt).unwrap();
         debug_assert_eq!(texture.len(), h * w * bytes_per_pixel(fmt));
 
         unsafe {
@@ -39,12 +39,11 @@ impl Tex {
     }
 }
 
-fn bytes_per_pixel(fmt: ColorFormat) -> usize {
-    use ColorFormat::*;
+fn bytes_per_pixel(fmt: ColourFormat) -> usize {
     match fmt {
-        Rgba8 => 4,
-        Rgb8 => 3,
-        Rgba5551 | Rgb565 => 2,
+        ColourFormat::Rgba8 => 4,
+        ColourFormat::Rgb8 => 3,
+        ColourFormat::Rgba5551 | ColourFormat::Rgb565 => 2,
         _ => todo!(),
     }
 }
