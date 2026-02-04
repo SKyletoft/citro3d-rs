@@ -17,8 +17,10 @@ pub struct Sprite(pub(crate) C2D_Sprite);
 
 impl Sprite {
     pub fn new() -> Self {
-        let mut texture = Tex::new(32, 32, ColorFormat::Rgb565);
+        Sprite::from_tex(Tex::new(32, 32, ColorFormat::Rgb565).0)
+    }
 
+    pub fn from_tex(tex: Tex) -> Self {
         let mut tex = Box::leak(Box::new(tex)) as *mut citro3d_sys::C3D_Tex;
         let mut subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: 32,
