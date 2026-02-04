@@ -22,7 +22,11 @@ impl Tex {
     }
 
     #[doc(alias = "C3D_TexUpload")]
-    pub fn upload(&mut self, texture: &[u8]) {
+    pub fn upload<T, const M: usize, const N: usize>(&mut self, mut texture: [[T; M]; N])
+    where
+        Assert<{ M % 8 == 0 }>: IsTrue,
+        Assert<{ N % 8 == 0 }>: IsTrue,
+    {
         let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
@@ -44,3 +48,6 @@ fn bytes_per_pixel(fmt: ColorFormat) -> usize {
         _ => todo!(),
     }
 }
+pub enum Assert<const CHECK: bool> {}
+pub trait IsTrue {}
+impl IsTrue for Assert<true> {}
