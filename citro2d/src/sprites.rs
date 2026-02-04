@@ -1,14 +1,15 @@
+use citro2d_sys::{
+    C2D_DrawParams, C2D_DrawParams__bindgen_ty_1, C2D_DrawParams__bindgen_ty_2, C2D_DrawSprite,
+    C2D_Image, C2D_Sprite, Tex3DS_SubTexture,
+};
+use citro3d::texture::ColorFormat;
+
 use crate::{
     Instance,
     render::{Color, Target},
     shapes::Shape,
     texture::Tex,
 };
-use citro2d_sys::{
-    C2D_DrawParams, C2D_DrawParams__bindgen_ty_1, C2D_DrawParams__bindgen_ty_2, C2D_DrawSprite,
-    C2D_Image, C2D_Sprite, Tex3DS_SubTexture,
-};
-use citro3d::texture::ColorFormat;
 
 #[doc(alias = "C2D_Sprite")]
 #[repr(transparent)]
