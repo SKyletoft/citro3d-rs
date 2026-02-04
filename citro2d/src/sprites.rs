@@ -50,6 +50,12 @@ impl Sprite {
         };
         Self(inner)
     }
+
+    pub fn texture_mut(&mut self) -> Option<&mut Tex> {
+        unsafe {
+            std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&mut Tex>>(self.0.image.tex)
+        }
+    }
 }
 
 impl Shape for Sprite {
