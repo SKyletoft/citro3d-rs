@@ -48,6 +48,21 @@ fn bytes_per_pixel(fmt: ColorFormat) -> usize {
         _ => todo!(),
     }
 }
+
+fn swizzle<T, const M: usize, const N: usize>(data: &mut [[T; M]; N])
+where
+    Assert<{ M % 8 == 0 }>: IsTrue,
+    Assert<{ N % 8 == 0 }>: IsTrue,
+{
+    for y in 0..M {
+        for x in 0..N {
+            // swizzle_block([x, x + 1, x + 2, x + 3], data);
+        }
+    }
+}
+
+fn swizzle_block<T>(entries: [usize; 8 * 8], data: &mut [T]) {}
+
 pub enum Assert<const CHECK: bool> {}
 pub trait IsTrue {}
 impl IsTrue for Assert<true> {}
