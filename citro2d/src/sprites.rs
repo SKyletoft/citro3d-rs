@@ -4,12 +4,7 @@ use citro2d_sys::{
 };
 use citro3d::texture::ColorFormat;
 
-use crate::{
-    Instance,
-    render::{Color, Target},
-    shapes::Shape,
-    texture::Tex,
-};
+use crate::{shapes::Shape, texture::Tex};
 
 #[doc(alias = "C2D_Sprite")]
 #[repr(transparent)]
