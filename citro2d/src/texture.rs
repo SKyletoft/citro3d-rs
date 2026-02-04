@@ -31,6 +31,18 @@ impl Tex {
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
         let fmt = ColourFormat::try_from(fmt).unwrap();
+
+        swizzle(&mut texture);
+        unsafe {
+            citro3d_sys::C3D_TexUpload(&raw mut self.0, texture.as_ptr() as *const std::ffi::c_void)
+        };
+    }
+
+    pub fn upload_swizzled(&mut self, texture: &[u8]) {
+        let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
+        let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
+        let fmt = self.0._bitfield_1.get(0, 4) as u8;
+        let fmt = ColourFormat::try_from(fmt).unwrap();
         debug_assert_eq!(texture.len(), h * w * bytes_per_pixel(fmt));
 
         unsafe {
