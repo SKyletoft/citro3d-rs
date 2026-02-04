@@ -18,6 +18,7 @@
 pub mod error;
 pub mod render;
 pub mod shapes;
+pub mod texture;
 use citro2d_sys::C2D_DEFAULT_MAX_OBJECTS;
 pub use error::{Error, Result};
 use render::Target;
