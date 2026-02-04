@@ -59,7 +59,7 @@ impl Sprite {
 impl Shape for Sprite {
     #[doc(alias = "C2D_DrawSprite")]
     fn render(&self) -> bool {
-        unsafe { C2D_DrawSprite(&raw const self.0 as *mut _) }
+        unsafe { C2D_DrawSprite(&raw const self.0 as *mut C2D_Sprite) }
     }
 }
 
