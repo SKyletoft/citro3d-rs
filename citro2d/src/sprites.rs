@@ -19,20 +19,18 @@ impl Sprite {
     pub fn new() -> Self {
         let mut texture = Tex::new(32, 32, ColorFormat::Rgb565);
 
-        let mut tex3ds_subtexture = Tex3DS_SubTexture {
+        let mut tex = Box::leak(Box::new(tex)) as *mut citro3d_sys::C3D_Tex;
+        let mut subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: 32,
             height: 32,
-
-            // What is the coordinate space for these?
             left: 0f32,
             top: 0f32,
             right: 1f32,
             bottom: 1f32,
-        };
-        let mut c2d_image = C2D_Image {
-            tex: &raw mut texture.0,
-            subtex: &raw mut tex3ds_subtexture,
-        };
+        })) as *mut Tex3DS_SubTexture;
+
+        let mut c2d_image = C2D_Image { tex, subtex };
+
         let mut c2d_drawparams = C2D_DrawParams {
             pos: C2D_DrawParams__bindgen_ty_1 {
                 x: 50.,
@@ -62,5 +60,18 @@ impl Shape for Sprite {
     #[doc(alias = "C2D_DrawSprite")]
     fn render(&self) -> bool {
         unsafe { C2D_DrawSprite(&raw const self.0 as *mut _) }
+    }
+}
+
+impl Drop for Sprite {
+    fn drop(&mut self) {
+        let C2D_Sprite {
+            image: C2D_Image { tex, subtex },
+            ..
+        } = self.0;
+        unsafe {
+            let _ = Box::from_raw(tex as *mut Tex);
+            let _ = Box::from_raw(subtex as *mut Tex3DS_SubTexture);
+        }
     }
 }
