@@ -16,10 +16,13 @@ impl Sprite {
     }
 
     pub fn from_tex(tex: Tex) -> Self {
+        let width = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
+        let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
+
         let mut tex = Box::leak(Box::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
         let mut subtex = Box::leak(Box::new(Tex3DS_SubTexture {
-            width: 32,
-            height: 32,
+            width: width as u16,
+            height: height as u16,
             left: 0f32,
             top: 0f32,
             right: 1f32,
