@@ -219,7 +219,6 @@ impl Texture {
         }
     }
 
-<<<<<<< HEAD
     /// Upload the provided data buffer to the texture, and to the given face if it's a cube
     /// texture. For flat textures, the face argument is not considered so [`Face::default()`]
     /// can be used.
@@ -228,11 +227,9 @@ impl Texture {
         self.load_image_at_mipmap_level(data, face, 0)
     }
 
+    pub use ColorFormat as ColourFormat;
+
     /// Upload the provided data buffer to the texture's specific mipmap level, and to the given
-    /// face if it's a cube texture. For flat textures, the face argument is not considered so
-    /// [`Face::default()`] can be used.
-    #[doc(alias = "C3D_TexLoadImage")]
-    pub fn load_image_at_mipmap_level(
     /// face if it's a cube texture. For flat textures, the face argument is not considered so
     /// [`Face::default()`] can be used.
     #[doc(alias = "C3D_TexLoadImage")]
