@@ -181,7 +181,7 @@ pub enum ColorFormat {
     #[doc(alias = "GPU_ETC1A4")]
     Etc1A4 = ctru_sys::GPU_ETC1A4,
 }
-pub type ColourFormat = ColorFormat;
+pub use ColorFormat as ColourFormat;
 
 impl TryFrom<u8> for ColorFormat {
     type Error = String;

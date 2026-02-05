@@ -10,7 +10,7 @@ use crate::{Error, Result, shapes::Shape};
 pub struct Color {
     pub inner: u32,
 }
-pub type Colour = Color;
+pub use Color as Colour;
 
 impl Color {
     /// Create a new color with the given RGB values. Alpha is set to 255 (fully opaque).
