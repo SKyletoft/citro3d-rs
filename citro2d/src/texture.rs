@@ -18,11 +18,11 @@ impl Tex {
     }
 
     #[doc(alias = "C3D_TexUpload")]
-    pub fn upload<T, const M: usize, const N: usize>(&mut self, mut texture: [[T; M]; N])
-    where
-        Assert<{ M % 8 == 0 }>: IsTrue,
-        Assert<{ N % 8 == 0 }>: IsTrue,
-    {
+    // TODO: When const generic expressions are stable O should be removed and replaced with M * N
+    pub fn swizzle_and_upload<T: Default + Copy, const M: usize, const N: usize, const O: usize>(
+        &mut self,
+        texture: &[[T; M]; N],
+    ) {
         let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
@@ -61,20 +61,14 @@ fn bytes_per_pixel(fmt: ColourFormat) -> usize {
     }
 }
 
-fn swizzle<T, const M: usize, const N: usize>(data: &mut [[T; M]; N])
-where
-    Assert<{ M % 8 == 0 }>: IsTrue,
-    Assert<{ N % 8 == 0 }>: IsTrue,
-{
     for y in 0..M {
         for x in 0..N {
             // swizzle_block([x, x + 1, x + 2, x + 3], data);
         }
+fn swizzle<T: Copy + Default, const M: usize, const N: usize, const O: usize>(
+    data: &mut [[T; M]; N],
+) {
     }
 }
 
-fn swizzle_block<T>(entries: [usize; 8 * 8], data: &mut [T]) {}
 
-pub enum Assert<const CHECK: bool> {}
-pub trait IsTrue {}
-impl IsTrue for Assert<true> {}
