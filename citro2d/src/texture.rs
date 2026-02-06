@@ -14,6 +14,8 @@ pub struct Tex(pub(crate) C3D_Tex);
 impl Tex {
     #[doc(alias = "C3D_TexInit")]
     pub fn new(width: u16, height: u16, format: ColourFormat) -> Self {
+        let width = (width + 7) & !7;
+        let height = (height + 7) & !7;
         let mut texture = std::mem::MaybeUninit::<citro3d_sys::C3D_Tex>::uninit();
         let init_success = unsafe { C3D_TexInit(texture.as_mut_ptr(), width, height, format as _) };
         assert!(init_success);
