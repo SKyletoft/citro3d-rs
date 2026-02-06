@@ -128,43 +128,11 @@ impl Sprite {
 
     pub fn set_mirroring(&mut self, mirroring: Mirroring) {
         let subtex = unsafe { &mut *(self.0.image.subtex as *mut citro2d_sys::Tex3DS_SubTexture) };
-        match mirroring {
-            Mirroring::Normal => {
-                subtex.left = 0.;
-                subtex.top = 1.;
-                subtex.right = 1.;
-                subtex.bottom = 0.;
-            }
-            Mirroring::MirrorX => {
-                subtex.left = 1.;
-                subtex.top = 1.;
-                subtex.right = 0.;
-                subtex.bottom = 0.;
-            }
-            Mirroring::MirrorY => {
-                subtex.left = 0.;
-                subtex.top = 0.;
-                subtex.right = 1.;
-                subtex.bottom = 1.;
-            }
-            Mirroring::MirrorXY => {
-                subtex.left = 1.;
-                subtex.top = 0.;
-                subtex.right = 0.;
-                subtex.bottom = 1.;
-            }
-            Mirroring::Custom {
-                left,
-                top,
-                right,
-                bottom,
-            } => {
-                subtex.left = left;
-                subtex.top = top;
-                subtex.right = right;
-                subtex.bottom = bottom;
-            }
-        }
+        let (left, top, right, bottom) = mirroring.into();
+        subtex.left = left;
+        subtex.top = top;
+        subtex.right = right;
+        subtex.bottom = bottom;
     }
 }
 
@@ -179,6 +147,23 @@ pub enum Mirroring {
         right: f32,
         bottom: f32,
     },
+}
+
+impl From<Mirroring> for (f32, f32, f32, f32) {
+    fn from(value: Mirroring) -> Self {
+        match mirroring {
+            Mirroring::Normal => (0., 1., 1., 0.),
+            Mirroring::MirrorX => (1., 1., 0., 0.),
+            Mirroring::MirrorY => (0., 0., 1., 1.),
+            Mirroring::MirrorXY => (1., 0., 0., 1.),
+            Mirroring::Custom {
+                left,
+                top,
+                right,
+                bottom,
+            } => (left, top, right, bottom),
+        }
+    }
 }
 
 impl Shape for Sprite {
