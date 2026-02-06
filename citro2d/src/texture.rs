@@ -1,15 +1,8 @@
 use citro3d::texture::ColourFormat;
-use citro3d_sys::{C3D_Tex, C3D_TexInit};
-
-use crate::{
-    Instance,
-    render::{Colour, Target},
-    shapes::Shape,
-};
 
 #[doc(alias = "C3D_Tex")]
 #[repr(transparent)]
-pub struct Tex(pub(crate) C3D_Tex);
+pub struct Tex(pub(crate) citro3d_sys::C3D_Tex);
 
 impl Tex {
     #[doc(alias = "C3D_TexInit")]
@@ -17,7 +10,8 @@ impl Tex {
         let width = (width + 7) & !7;
         let height = (height + 7) & !7;
         let mut texture = std::mem::MaybeUninit::<citro3d_sys::C3D_Tex>::uninit();
-        let init_success = unsafe { C3D_TexInit(texture.as_mut_ptr(), width, height, format as _) };
+        let init_success =
+            unsafe { citro3d_sys::C3D_TexInit(texture.as_mut_ptr(), width, height, format as _) };
         assert!(init_success);
         let c3d_tex = unsafe { texture.assume_init() };
         Self(c3d_tex)
