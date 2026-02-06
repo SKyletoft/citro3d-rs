@@ -24,9 +24,9 @@ impl Sprite {
             width: width as u16,
             height: height as u16,
             left: 0f32,
-            top: 0f32,
+            top: 1f32,
             right: 1f32,
-            bottom: 1f32,
+            bottom: 0f32,
         })) as *mut Tex3DS_SubTexture;
 
         let c2d_image = C2D_Image { tex, subtex };
