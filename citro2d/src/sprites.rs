@@ -125,6 +125,43 @@ impl Sprite {
             std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&mut Tex>>(self.0.image.tex)
         }
     }
+
+    pub fn set_mirroring(&mut self, mirroring: Mirroring) {
+        let subtex = unsafe { &mut *(self.0.image.subtex as *mut citro2d_sys::Tex3DS_SubTexture) };
+        match mirroring {
+            Mirroring::Normal => {
+                subtex.left = 0.;
+                subtex.top = 1.;
+                subtex.right = 1.;
+                subtex.bottom = 0.;
+            }
+            Mirroring::MirrorX => {
+                subtex.left = 1.;
+                subtex.top = 1.;
+                subtex.right = 0.;
+                subtex.bottom = 0.;
+            }
+            Mirroring::MirrorY => {
+                subtex.left = 0.;
+                subtex.top = 0.;
+                subtex.right = 1.;
+                subtex.bottom = 1.;
+            }
+            Mirroring::MirrorXY => {
+                subtex.left = 1.;
+                subtex.top = 0.;
+                subtex.right = 0.;
+                subtex.bottom = 1.;
+            }
+        }
+    }
+}
+
+pub enum Mirroring {
+    Normal,
+    MirrorX,
+    MirrorY,
+    MirrorXY,
 }
 
 impl Shape for Sprite {
