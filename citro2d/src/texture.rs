@@ -17,7 +17,7 @@ impl Tex {
         let mut texture = std::mem::MaybeUninit::<citro3d_sys::C3D_Tex>::uninit();
         let init_success = unsafe { C3D_TexInit(texture.as_mut_ptr(), width, height, format as _) };
         assert!(init_success);
-        let mut c3d_tex = unsafe { texture.assume_init() };
+        let c3d_tex = unsafe { texture.assume_init() };
         Self(c3d_tex)
     }
 
