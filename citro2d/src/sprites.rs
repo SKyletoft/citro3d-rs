@@ -19,8 +19,8 @@ impl Sprite {
         let width = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
         let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
 
-        let mut tex = Box::leak(Box::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
-        let mut subtex = Box::leak(Box::new(Tex3DS_SubTexture {
+        let tex = Box::leak(Box::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
+        let subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: width as u16,
             height: height as u16,
             left: 0f32,
@@ -29,9 +29,9 @@ impl Sprite {
             bottom: 1f32,
         })) as *mut Tex3DS_SubTexture;
 
-        let mut c2d_image = C2D_Image { tex, subtex };
+        let c2d_image = C2D_Image { tex, subtex };
 
-        let mut c2d_drawparams = C2D_DrawParams {
+        let c2d_drawparams = C2D_DrawParams {
             pos: C2D_DrawParams__bindgen_ty_1 {
                 x: 50.,
                 y: 50.,
