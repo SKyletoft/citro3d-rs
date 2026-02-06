@@ -153,6 +153,17 @@ impl Sprite {
                 subtex.right = 0.;
                 subtex.bottom = 1.;
             }
+            Mirroring::Custom {
+                left,
+                top,
+                right,
+                bottom,
+            } => {
+                subtex.left = left;
+                subtex.top = top;
+                subtex.right = right;
+                subtex.bottom = bottom;
+            }
         }
     }
 }
@@ -162,6 +173,12 @@ pub enum Mirroring {
     MirrorX,
     MirrorY,
     MirrorXY,
+    Custom {
+        left: f32,
+        top: f32,
+        right: f32,
+        bottom: f32,
+    },
 }
 
 impl Shape for Sprite {
