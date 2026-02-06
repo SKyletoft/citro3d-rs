@@ -2,7 +2,7 @@ use citro2d_sys::{
     C2D_DrawParams, C2D_DrawParams__bindgen_ty_1, C2D_DrawParams__bindgen_ty_2, C2D_DrawSprite,
     C2D_Image, C2D_Sprite, Tex3DS_SubTexture,
 };
-use citro3d::texture::ColorFormat;
+use citro3d::texture::ColourFormat;
 
 use crate::{shapes::Shape, texture::Tex};
 
@@ -12,7 +12,7 @@ pub struct Sprite(pub(crate) C2D_Sprite);
 
 impl Sprite {
     pub fn new() -> Self {
-        Sprite::from_tex(Tex::new(32, 32, ColorFormat::Rgb565))
+        Sprite::from_tex(Tex::new(32, 32, ColourFormat::Rgb565))
     }
 
     pub fn from_tex(tex: Tex) -> Self {
