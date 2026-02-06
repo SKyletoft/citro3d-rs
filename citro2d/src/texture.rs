@@ -66,7 +66,7 @@ fn bytes_per_pixel(fmt: ColourFormat) -> usize {
         | ColourFormat::Hilo8
         | ColourFormat::Rgba5551
         | ColourFormat::Rgb565 => 2,
-        ColourFormat::L8 | ColourFormat::A8 | ColourFormat::LA4 | ColourFormat::Etc1A4 => 1,
+        ColourFormat::L8 | ColourFormat::A8 | ColourFormat::La4 | ColourFormat::Etc1A4 => 1,
         ColourFormat::L4 | ColourFormat::A4 | ColourFormat::Etc1 => 1, // 0.5?
     }
 }
