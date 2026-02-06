@@ -49,6 +49,77 @@ impl Sprite {
         Self(inner)
     }
 
+    pub fn pos(&self) -> (f32, f32) {
+        let x = self.0.params.pos.x;
+        let y = self.0.params.pos.y;
+        (x, y)
+    }
+    pub fn set_pos(&mut self, (x, y): (f32, f32)) {
+        self.0.params.pos.x = x;
+        self.0.params.pos.y = y;
+    }
+    pub fn pos_mut(&mut self) -> (&mut f32, &mut f32) {
+        (&mut self.0.params.pos.x, &mut self.0.params.pos.y)
+    }
+
+    pub fn size(&self) -> (f32, f32) {
+        let w = self.0.params.pos.w;
+        let h = self.0.params.pos.h;
+        (w, h)
+    }
+    pub fn set_size(&mut self, (w, h): (f32, f32)) {
+        self.0.params.pos.w = w;
+        self.0.params.pos.h = h;
+    }
+    pub fn size_mut(&mut self) -> (&mut f32, &mut f32) {
+        (&mut self.0.params.pos.w, &mut self.0.params.pos.h)
+    }
+
+    pub fn angle(&self) -> f32 {
+        self.0.params.angle
+    }
+    pub fn set_angle(&mut self, angle: f32) {
+        self.0.params.angle = angle;
+    }
+    pub fn angle_mut(&mut self) -> &mut f32 {
+        &mut self.0.params.angle
+    }
+
+    pub fn depth(&self) -> f32 {
+        self.0.params.depth
+    }
+    pub fn set_depth(&mut self, depth: f32) {
+        self.0.params.depth = depth;
+    }
+    pub fn depth_mut(&mut self) -> &mut f32 {
+        &mut self.0.params.depth
+    }
+
+    pub fn centre(&self) -> (f32, f32) {
+        let C2D_DrawParams__bindgen_ty_2 { x, y } = self.0.params.center;
+        (x, y)
+    }
+    pub fn set_centre(&mut self, (x, y): (f32, f32)) {
+        self.0.params.center.x = x;
+        self.0.params.center.y = y;
+    }
+    pub fn centre_mut(&mut self) -> (&mut f32, &mut f32) {
+        (&mut self.0.params.center.x, &mut self.0.params.center.y)
+    }
+
+    pub fn center(&self) -> (f32, f32) {
+        self.centre()
+    }
+    pub fn set_center(&mut self, center: (f32, f32)) {
+        self.set_centre(center)
+    }
+    pub fn center_mut(&mut self) -> (&mut f32, &mut f32) {
+        self.centre_mut()
+    }
+
+    pub fn texture(&self) -> Option<&Tex> {
+        unsafe { std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&Tex>>(self.0.image.tex) }
+    }
     pub fn texture_mut(&mut self) -> Option<&mut Tex> {
         unsafe {
             std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&mut Tex>>(self.0.image.tex)
