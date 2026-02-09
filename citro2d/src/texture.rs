@@ -126,6 +126,44 @@ impl Tex {
             }
         };
     }
+
+    pub fn update_tile<T: PixelType>(&mut self, texture: &[[T; 8]; 8], tile_x: u16, tile_y: u16) {
+        let mut texture = *texture;
+        swizzle::<T, 8, 8, 64>(&mut texture);
+        let mut c3d_tex_copy = self.0.clone();
+
+        let raw_dim = unsafe { self.0.__bindgen_anon_2.dim };
+        let mut raw_data_ptr =
+            unsafe { citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut()) };
+        let raw_height = unsafe { &mut c3d_tex_copy.__bindgen_anon_2.__bindgen_anon_1.height };
+        let raw_width = unsafe { &mut c3d_tex_copy.__bindgen_anon_2.__bindgen_anon_1.width };
+
+        let actual_width = *raw_width;
+        raw_data_ptr = unsafe {
+            raw_data_ptr.byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>())
+        };
+        *raw_width = 8;
+        *raw_height = 8;
+
+        unsafe {
+            let tex_size = c3d_tex_copy._bitfield_1.get(4, 28) as u32;
+            let out = c3d_tex_copy.__bindgen_anon_1.data;
+            let size = std::mem::size_of_val(&texture);
+            if addr_is_vram(out) {
+                let src = std::slice::from_raw_parts(texture.as_ptr() as *mut u8, size as usize);
+                let dst = std::slice::from_raw_parts_mut(raw_data_ptr as *mut u8, size as usize);
+                dst.copy_from_slice(src);
+            } else {
+                unreachable!("I SHOULDN'T HAPPEN!!!");
+            }
+        };
+    }
+}
+
+#[doc(alias = "addrIsVRAM")]
+fn addr_is_vram(out: *mut std::ffi::c_void) -> bool {
+    let vaddr = out as u32;
+    !(vaddr >= ctru_sys::OS_VRAM_VADDR && vaddr < ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE)
 }
 
 fn bytes_per_pixel(fmt: ColourFormat) -> usize {
