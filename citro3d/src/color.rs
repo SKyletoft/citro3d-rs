@@ -7,6 +7,7 @@ pub struct Color {
     pub g: f32,
     pub b: f32,
 }
+pub use Color as Colour;
 
 impl Color {
     pub fn new(r: f32, g: f32, b: f32) -> Self {
