@@ -6,7 +6,7 @@ use ctru::services::gfx::Screen;
 use crate::{Error, Result, shapes::Shape};
 
 /// A color in RGBA format. The color is stored as a 32-bit integer
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Color {
     pub inner: u32,
 }
