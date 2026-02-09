@@ -1,4 +1,6 @@
-use citro3d::texture::ColourFormat;
+pub use citro3d::texture::ColourFormat;
+
+use crate::pixel_type::PixelType;
 
 #[doc(alias = "C3D_Tex")]
 #[repr(transparent)]
@@ -18,7 +20,7 @@ impl Tex {
     }
 
     // TODO: When const generic expressions are stable O should be removed and replaced with M * N
-    pub fn swizzle_and_upload<T: Default + Copy, const M: usize, const N: usize, const O: usize>(
+    pub fn swizzle_and_upload<T: PixelType, const M: usize, const N: usize, const O: usize>(
         &mut self,
         texture: &[[T; M]; N],
     ) {
