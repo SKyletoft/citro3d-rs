@@ -163,7 +163,7 @@ pub enum Mirroring {
 }
 
 impl From<Mirroring> for (f32, f32, f32, f32) {
-    fn from(value: Mirroring) -> Self {
+    fn from(mirroring: Mirroring) -> Self {
         match mirroring {
             Mirroring::Normal => (0., 1., 1., 0.),
             Mirroring::MirrorX => (1., 1., 0., 0.),
