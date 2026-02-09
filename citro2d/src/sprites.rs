@@ -134,6 +134,19 @@ impl Sprite {
         subtex.right = right;
         subtex.bottom = bottom;
     }
+
+    pub fn destruct(self) -> (Box<Tex>, Box<Tex3DS_SubTexture>) {
+        let C2D_Sprite {
+            image: C2D_Image { tex, subtex },
+            ..
+        } = self.0;
+        unsafe {
+            (
+                Box::from_raw(tex as *mut Tex),
+                Box::from_raw(subtex as *mut Tex3DS_SubTexture),
+            )
+        }
+    }
 }
 
 pub enum Mirroring {
