@@ -43,8 +43,9 @@ impl Tex {
 
     #[doc(alias = "C3D_TexUpload")]
     pub fn upload_swizzled(&mut self, texture: &[u8]) {
-        let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height as usize };
-        let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width as usize };
+        let d = unsafe { self.0.__bindgen_anon_2.dim };
+        let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height } as usize;
+        let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width } as usize;
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
         let fmt = ColourFormat::try_from(fmt).unwrap();
         debug_assert_eq!(texture.len(), h * w * bytes_per_pixel(fmt));
@@ -52,7 +53,75 @@ impl Tex {
         debug_assert_eq!(w % 8, 0);
 
         unsafe {
-            citro3d_sys::C3D_TexUpload(&raw mut self.0, texture.as_ptr() as *const std::ffi::c_void)
+            // citro3d_sys::C3D_TexUpload(&raw mut self.0, texture.as_ptr() as *const std::ffi::c_void)
+            // citro3d_sys::C3D_TexLoadImage(
+            //     &raw mut self.0,
+            //     texture.as_ptr() as *const std::ffi::c_void,
+            //     ctru_sys::GPU_TEXFACE_2D,
+            //     0,
+            // );
+            // {
+            //     let data = texture.as_ptr() as *const std::ffi::c_void;
+            //     let mut size: u32 = 0;
+            //     let out: *mut std::ffi::c_void = citro3d_sys::C3D_TexGetImagePtr(
+            //         &raw mut self.0,
+            //         // if dbg!(
+            //         //     !(citro3d_sys::C3D_TexGetType(&raw mut self.0)
+            //         //         == ctru_sys::GPU_TEX_CUBE_MAP
+            //         //         || citro3d_sys::C3D_TexGetType(&raw mut self.0)
+            //         //             == ctru_sys::GPU_TEX_SHADOW_CUBE)
+            //         // ) {
+            //         (*&raw mut self.0).__bindgen_anon_1.data,
+            //         // } else {
+            //         //     ((*(*&raw mut self.0).__bindgen_anon_1.cube).data)
+            //         //         [ctru_sys::GPU_TEXFACE_2D as usize]
+            //         // },
+            //         0,
+            //         &raw mut size,
+            //     );
+
+            //     if (!{
+            //         let addr = out;
+            //         let vaddr = addr as u32;
+            //         vaddr >= ctru_sys::OS_VRAM_VADDR
+            //             && vaddr < ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE
+            //     }) {
+            //         // memcpy(out, data, size);
+            //         std::slice::from_raw_parts_mut(out as *mut u8, size as usize).copy_from_slice(
+            //             std::slice::from_raw_parts(data as *mut u8, size as usize),
+            //         );
+            //     } else {
+            //         citro3d_sys::C3D_SyncTextureCopy(
+            //             data as *mut u32,
+            //             0,
+            //             out as *mut u32,
+            //             0,
+            //             size,
+            //             8,
+            //         );
+            //     }
+            // }
+            {
+                let tex_size = self.0._bitfield_1.get(4, 28) as u32;
+                let size = citro3d_sys::C3D_TexCalcLevelSize(tex_size, 0);
+                let out = self.0.__bindgen_anon_1.data;
+
+                if addr_is_vram(out) {
+                    let src =
+                        std::slice::from_raw_parts(texture.as_ptr() as *mut u8, size as usize);
+                    let mut dst = std::slice::from_raw_parts_mut(out as *mut u8, size as usize);
+                    dst.copy_from_slice(src);
+                } else {
+                    citro3d_sys::C3D_SyncTextureCopy(
+                        texture.as_ptr() as *mut u32,
+                        0,
+                        out as *mut u32,
+                        0,
+                        size,
+                        8,
+                    );
+                }
+            }
         };
     }
 }
