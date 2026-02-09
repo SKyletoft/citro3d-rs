@@ -20,6 +20,7 @@ pub mod render;
 pub mod shapes;
 pub mod sprites;
 pub mod texture;
+pub mod pixel_type;
 use citro2d_sys::C2D_DEFAULT_MAX_OBJECTS;
 pub use error::{Error, Result};
 use render::Target;
