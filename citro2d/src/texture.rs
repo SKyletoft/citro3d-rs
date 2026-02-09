@@ -149,7 +149,7 @@ impl Tex {
             let tex_size = c3d_tex_copy._bitfield_1.get(4, 28) as u32;
             let out = c3d_tex_copy.__bindgen_anon_1.data;
             let size = std::mem::size_of_val(&texture);
-            if addr_is_vram(out) {
+            if !addr_is_vram(out) {
                 let src = std::slice::from_raw_parts(texture.as_ptr() as *mut u8, size as usize);
                 let dst = std::slice::from_raw_parts_mut(raw_data_ptr as *mut u8, size as usize);
                 dst.copy_from_slice(src);
@@ -163,7 +163,7 @@ impl Tex {
 #[doc(alias = "addrIsVRAM")]
 fn addr_is_vram(out: *mut std::ffi::c_void) -> bool {
     let vaddr = out as u32;
-    !(vaddr >= ctru_sys::OS_VRAM_VADDR && vaddr < ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE)
+    vaddr >= ctru_sys::OS_VRAM_VADDR && vaddr < ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE
 }
 
 fn bytes_per_pixel(fmt: ColourFormat) -> usize {
