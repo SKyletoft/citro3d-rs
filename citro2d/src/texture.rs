@@ -130,9 +130,8 @@ impl Tex {
     pub fn update_tile<T: PixelType>(&mut self, texture: &[[T; 8]; 8], tile_x: u16, tile_y: u16) {
         let mut texture = *texture;
         swizzle::<T, 8, 8, 64>(&mut texture);
-        let mut c3d_tex_copy = self.0.clone();
 
-        let raw_dim = unsafe { self.0.__bindgen_anon_2.dim };
+        let mut c3d_tex_copy = self.0.clone();
         let mut raw_data_ptr =
             unsafe { citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut()) };
         let raw_height = unsafe { &mut c3d_tex_copy.__bindgen_anon_2.__bindgen_anon_1.height };
@@ -146,7 +145,6 @@ impl Tex {
         *raw_height = 8;
 
         unsafe {
-            let tex_size = c3d_tex_copy._bitfield_1.get(4, 28) as u32;
             let out = c3d_tex_copy.__bindgen_anon_1.data;
             let size = std::mem::size_of_val(&texture);
             if !addr_is_vram(out) {
