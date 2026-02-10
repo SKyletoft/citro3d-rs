@@ -28,7 +28,7 @@ pub struct Rgba5551 {
 impl PixelType for Rgba5551 {}
 
 impl Rgba5551 {
-    pub const TRANSPARENT: Rgba5551 = Rgba5551::from_bits(0b00000_00000_00000_1);
+    pub const TRANSPARENT: Rgba5551 = Rgba5551::from_bits(0b1_00000_00000_00000);
 }
 
 #[derive(Copy, Clone)]
