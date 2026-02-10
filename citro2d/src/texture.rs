@@ -127,10 +127,17 @@ impl Tex {
         };
     }
 
-    pub fn update_tile<T: PixelType>(&mut self, texture: &[[T; 8]; 8], tile_x: u16, tile_y: u16) {
-        let mut texture = *texture;
+    pub fn swizzle_and_update_tile<T: PixelType>(
+        &mut self,
+        mut texture: [[T; 8]; 8],
+        tile_x: u16,
+        tile_y: u16,
+    ) {
         swizzle::<T, 8, 8, 64>(&mut texture);
+        self.update_tile(texture, tile_x, tile_y);
+    }
 
+    pub fn update_tile<T: PixelType>(&mut self, texture: [[T; 8]; 8], tile_x: u16, tile_y: u16) {
         let mut c3d_tex_copy = self.0.clone();
         let mut raw_data_ptr =
             unsafe { citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut()) };
@@ -139,7 +146,8 @@ impl Tex {
 
         let actual_width = *raw_width;
         raw_data_ptr = unsafe {
-            raw_data_ptr.byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>())
+            raw_data_ptr
+                .byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>())
         };
         *raw_width = 8;
         *raw_height = 8;
