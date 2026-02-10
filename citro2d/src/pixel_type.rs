@@ -1,6 +1,6 @@
 use bitfields::bitfield;
 
-pub trait PixelType : Sized + Default + Copy {}
+pub trait PixelType: Sized + Default + Copy {}
 
 use crate::render::Colour as Rgba8;
 impl PixelType for Rgba8 {}
