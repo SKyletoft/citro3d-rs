@@ -134,35 +134,19 @@ impl Tex {
         tile_y: u16,
     ) {
         swizzle::<T, 8, 8, 64>(&mut texture);
-        self.update_tile(texture, tile_x, tile_y);
+        self.update_tile(&texture, tile_x, tile_y);
     }
 
-    pub fn update_tile<T: PixelType>(&mut self, texture: [[T; 8]; 8], tile_x: u16, tile_y: u16) {
-        let mut c3d_tex_copy = self.0.clone();
-        let mut raw_data_ptr =
-            unsafe { citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut()) };
-        let raw_height = unsafe { &mut c3d_tex_copy.__bindgen_anon_2.__bindgen_anon_1.height };
-        let raw_width = unsafe { &mut c3d_tex_copy.__bindgen_anon_2.__bindgen_anon_1.width };
-
-        let actual_width = *raw_width;
-        raw_data_ptr = unsafe {
-            raw_data_ptr
+    pub fn update_tile<T: PixelType>(&mut self, texture: &[[T; 8]; 8], tile_x: u16, tile_y: u16) {
+        let raw_data_ptr = unsafe {
+            let actual_width = self.0.__bindgen_anon_2.__bindgen_anon_1.width;
+            citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut())
                 .byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>())
         };
-        *raw_width = 8;
-        *raw_height = 8;
 
-        unsafe {
-            let out = c3d_tex_copy.__bindgen_anon_1.data;
-            let size = std::mem::size_of_val(&texture);
-            if !addr_is_vram(out) {
-                let src = std::slice::from_raw_parts(texture.as_ptr() as *mut u8, size as usize);
-                let dst = std::slice::from_raw_parts_mut(raw_data_ptr as *mut u8, size as usize);
-                dst.copy_from_slice(src);
-            } else {
-                unreachable!("I SHOULDN'T HAPPEN!!!");
-            }
-        };
+        debug_assert!(!addr_is_vram(unsafe { self.0.__bindgen_anon_1.data }));
+        let dst = unsafe { &mut *(raw_data_ptr as *mut [[T; 8]; 8]) };
+        dst.copy_from_slice(texture);
     }
 }
 
