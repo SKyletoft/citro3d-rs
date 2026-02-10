@@ -138,15 +138,16 @@ impl Tex {
     }
 
     pub fn update_tile<T: PixelType>(&mut self, texture: &[[T; 8]; 8], tile_x: u16, tile_y: u16) {
-        let raw_data_ptr = unsafe {
-            let actual_width = self.0.__bindgen_anon_2.__bindgen_anon_1.width;
-            citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut())
-                .byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>())
-        };
-
         debug_assert!(!addr_is_vram(unsafe { self.0.__bindgen_anon_1.data }));
-        let dst = unsafe { &mut *(raw_data_ptr as *mut [[T; 8]; 8]) };
-        dst.copy_from_slice(texture);
+
+        let dst = unsafe {
+            let actual_width = self.0.__bindgen_anon_2.__bindgen_anon_1.width;
+            let raw_data_ptr =
+                citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut())
+                    .byte_add((tile_x + tile_y * actual_width / 8) as usize * 64 * size_of::<T>());
+            &mut *(raw_data_ptr as *mut [[T; 8]; 8])
+        };
+        *dst = *texture;
     }
 }
 
