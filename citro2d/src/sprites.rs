@@ -58,6 +58,10 @@ impl Sprite {
         self.0.params.pos.x = x;
         self.0.params.pos.y = y;
     }
+    pub fn with_pos(mut self, pos: (f32, f32)) -> Self {
+        self.set_pos(pos);
+        self
+    }
     pub fn pos_mut(&mut self) -> (&mut f32, &mut f32) {
         (&mut self.0.params.pos.x, &mut self.0.params.pos.y)
     }
@@ -71,6 +75,10 @@ impl Sprite {
         self.0.params.pos.w = w;
         self.0.params.pos.h = h;
     }
+    pub fn with_size(mut self, size: (f32, f32)) -> Self {
+        self.set_size(size);
+        self
+    }
     pub fn size_mut(&mut self) -> (&mut f32, &mut f32) {
         (&mut self.0.params.pos.w, &mut self.0.params.pos.h)
     }
@@ -81,6 +89,10 @@ impl Sprite {
     pub fn set_angle(&mut self, angle: f32) {
         self.0.params.angle = angle;
     }
+    pub fn with_angle(mut self, angle: f32) -> Self {
+        self.set_angle(angle);
+        self
+    }
     pub fn angle_mut(&mut self) -> &mut f32 {
         &mut self.0.params.angle
     }
@@ -90,6 +102,10 @@ impl Sprite {
     }
     pub fn set_depth(&mut self, depth: f32) {
         self.0.params.depth = depth;
+    }
+    pub fn with_depth(mut self, depth: f32) -> Self {
+        self.set_depth(depth);
+        self
     }
     pub fn depth_mut(&mut self) -> &mut f32 {
         &mut self.0.params.depth
@@ -107,11 +123,20 @@ impl Sprite {
         (&mut self.0.params.center.x, &mut self.0.params.center.y)
     }
 
+    pub fn with_centre(mut self, centre: (f32, f32)) -> Self {
+        self.set_centre(centre);
+        self
+    }
+
     pub fn center(&self) -> (f32, f32) {
         self.centre()
     }
     pub fn set_center(&mut self, center: (f32, f32)) {
         self.set_centre(center)
+    }
+    pub fn with_center(mut self, center: (f32, f32)) -> Self {
+        self.set_center(center);
+        self
     }
     pub fn center_mut(&mut self) -> (&mut f32, &mut f32) {
         self.centre_mut()
@@ -133,6 +158,11 @@ impl Sprite {
         subtex.top = top;
         subtex.right = right;
         subtex.bottom = bottom;
+    }
+
+    pub fn with_mirroring(mut self, mirroring: Mirroring) -> Self {
+        self.set_mirroring(mirroring);
+        self
     }
 
     pub fn destruct(self) -> (Box<Tex>, Box<Tex3DS_SubTexture>) {
