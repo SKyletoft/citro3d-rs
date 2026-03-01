@@ -179,6 +179,7 @@ impl Sprite {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Mirroring {
     Normal,
     MirrorX,
