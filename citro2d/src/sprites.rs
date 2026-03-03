@@ -181,9 +181,9 @@ impl Sprite {
             image: C2D_Image { tex, subtex },
             ..
         } = self.0;
+        debug_assert!(!tex.is_null());
+        debug_assert!(!subtex.is_null());
         unsafe {
-            debug_assert!(!tex.is_null());
-            debug_assert!(!subtex.is_null());
             (
                 Rc::from_raw(tex as *const Tex),
                 Box::from_raw(subtex as *mut Tex3DS_SubTexture),
@@ -236,9 +236,9 @@ impl Drop for Sprite {
             image: C2D_Image { tex, subtex },
             ..
         } = self.0;
+        debug_assert!(!tex.is_null());
+        debug_assert!(!subtex.is_null());
         unsafe {
-            debug_assert!(!tex.is_null());
-            debug_assert!(!subtex.is_null());
             let _ = Rc::from_raw(tex);
             let _ = Box::from_raw(subtex as *mut Tex3DS_SubTexture);
         }
