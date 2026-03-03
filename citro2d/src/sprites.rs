@@ -146,9 +146,9 @@ impl Sprite {
         self.centre_mut()
     }
 
-    pub fn texture(&self) -> Option<&Tex> {
-        unsafe { std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&Tex>>(self.0.image.tex) }
+    pub fn texture(&self) -> &Tex {
         debug_assert!(!self.0.image.tex.is_null());
+        unsafe { &*(self.0.image.tex as *const Tex) }
     }
     pub fn texture_mut(&mut self) -> Option<&mut Tex> {
         debug_assert!(!self.0.image.tex.is_null());
