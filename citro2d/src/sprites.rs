@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use citro2d_sys::{
     C2D_DrawParams, C2D_DrawParams__bindgen_ty_1, C2D_DrawParams__bindgen_ty_2, C2D_DrawSprite,
     C2D_Image, C2D_Sprite, Tex3DS_SubTexture,
@@ -19,7 +21,7 @@ impl Sprite {
         let width = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
         let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
 
-        let tex = Box::leak(Box::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
+        let tex = Rc::into_raw(Rc::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
         debug_assert!(!tex.is_null());
         let subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: width as u16,
@@ -149,8 +151,14 @@ impl Sprite {
         debug_assert!(!self.0.image.tex.is_null());
     }
     pub fn texture_mut(&mut self) -> Option<&mut Tex> {
-        unsafe {
-            std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&mut Tex>>(self.0.image.tex)
+        debug_assert!(!self.0.image.tex.is_null());
+        let rc = unsafe { Rc::from_raw(self.0.image.tex as *const Tex) };
+        let can_mutate = Rc::strong_count(&rc) == 1 && Rc::weak_count(&rc) == 0;
+        std::mem::forget(rc);
+        if can_mutate {
+            unsafe { Some(&mut *(self.0.image.tex as *mut Tex)) }
+        } else {
+            None
         }
     }
 
@@ -168,7 +176,7 @@ impl Sprite {
         self
     }
 
-    pub fn destruct(self) -> (Box<Tex>, Box<Tex3DS_SubTexture>) {
+    pub fn destruct(self) -> (Rc<Tex>, Box<Tex3DS_SubTexture>) {
         let C2D_Sprite {
             image: C2D_Image { tex, subtex },
             ..
@@ -177,7 +185,7 @@ impl Sprite {
             debug_assert!(!tex.is_null());
             debug_assert!(!subtex.is_null());
             (
-                Box::from_raw(tex as *mut Tex),
+                Rc::from_raw(tex as *const Tex),
                 Box::from_raw(subtex as *mut Tex3DS_SubTexture),
             )
         }
@@ -229,9 +237,9 @@ impl Drop for Sprite {
             ..
         } = self.0;
         unsafe {
-            let _ = Box::from_raw(tex as *mut Tex);
             debug_assert!(!tex.is_null());
             debug_assert!(!subtex.is_null());
+            let _ = Rc::from_raw(tex);
             let _ = Box::from_raw(subtex as *mut Tex3DS_SubTexture);
         }
     }
