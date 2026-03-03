@@ -5,6 +5,8 @@ pub use enums::*;
 
 mod enums;
 
+pub use ColorFormat as ColourFormat;
+
 /// The maximum number of textures that can be bound at once
 pub const TEXTURE_COUNT: usize = 4;
 /// Minimum width and height of a texture
@@ -226,8 +228,6 @@ impl Texture {
     pub fn load_image(&mut self, data: &[u8], face: Face) -> crate::Result<()> {
         self.load_image_at_mipmap_level(data, face, 0)
     }
-
-    pub use ColorFormat as ColourFormat;
 
     /// Upload the provided data buffer to the texture's specific mipmap level, and to the given
     /// face if it's a cube texture. For flat textures, the face argument is not considered so
