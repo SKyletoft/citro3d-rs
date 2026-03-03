@@ -20,6 +20,7 @@ impl Sprite {
         let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
 
         let tex = Box::leak(Box::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
+        debug_assert!(!tex.is_null());
         let subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: width as u16,
             height: height as u16,
@@ -28,6 +29,7 @@ impl Sprite {
             right: 1f32,
             bottom: 0f32,
         })) as *mut Tex3DS_SubTexture;
+        debug_assert!(!subtex.is_null());
 
         let c2d_image = C2D_Image { tex, subtex };
 
@@ -144,6 +146,7 @@ impl Sprite {
 
     pub fn texture(&self) -> Option<&Tex> {
         unsafe { std::mem::transmute::<*mut citro3d_sys::C3D_Tex, Option<&Tex>>(self.0.image.tex) }
+        debug_assert!(!self.0.image.tex.is_null());
     }
     pub fn texture_mut(&mut self) -> Option<&mut Tex> {
         unsafe {
@@ -171,6 +174,8 @@ impl Sprite {
             ..
         } = self.0;
         unsafe {
+            debug_assert!(!tex.is_null());
+            debug_assert!(!subtex.is_null());
             (
                 Box::from_raw(tex as *mut Tex),
                 Box::from_raw(subtex as *mut Tex3DS_SubTexture),
@@ -225,6 +230,8 @@ impl Drop for Sprite {
         } = self.0;
         unsafe {
             let _ = Box::from_raw(tex as *mut Tex);
+            debug_assert!(!tex.is_null());
+            debug_assert!(!subtex.is_null());
             let _ = Box::from_raw(subtex as *mut Tex3DS_SubTexture);
         }
     }
