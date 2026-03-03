@@ -12,6 +12,12 @@ use crate::{shapes::Shape, texture::Tex};
 #[repr(transparent)]
 pub struct Sprite(pub(crate) C2D_Sprite);
 
+impl Default for Sprite {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Sprite {
     pub fn new() -> Self {
         Sprite::from_tex(Tex::new(32, 32, ColourFormat::Rgb565))

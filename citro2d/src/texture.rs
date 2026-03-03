@@ -35,7 +35,7 @@ impl Tex {
         debug_assert_eq!(size_of::<T>(), bytes_per_pixel(fmt));
         debug_assert_eq!(M * N, O);
 
-        let mut texture = texture.clone();
+        let mut texture = *texture;
         swizzle::<T, M, N, O>(&mut texture);
 
         unsafe {
@@ -45,7 +45,7 @@ impl Tex {
 
     #[doc(alias = "C3D_TexUpload")]
     pub fn upload_swizzled(&mut self, texture: &[u8]) {
-        let d = unsafe { self.0.__bindgen_anon_2.dim };
+        let _d = unsafe { self.0.__bindgen_anon_2.dim };
         let h = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.height } as usize;
         let w = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1.width } as usize;
         let fmt = self.0._bitfield_1.get(0, 4) as u8;
@@ -111,7 +111,7 @@ impl Tex {
                 if addr_is_vram(out) {
                     let src =
                         std::slice::from_raw_parts(texture.as_ptr() as *mut u8, size as usize);
-                    let mut dst = std::slice::from_raw_parts_mut(out as *mut u8, size as usize);
+                    let dst = std::slice::from_raw_parts_mut(out as *mut u8, size as usize);
                     dst.copy_from_slice(src);
                 } else {
                     citro3d_sys::C3D_SyncTextureCopy(
@@ -170,7 +170,7 @@ impl Tex {
 #[doc(alias = "addrIsVRAM")]
 fn addr_is_vram(out: *mut std::ffi::c_void) -> bool {
     let vaddr = out as u32;
-    vaddr >= ctru_sys::OS_VRAM_VADDR && vaddr < ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE
+    (ctru_sys::OS_VRAM_VADDR..ctru_sys::OS_VRAM_VADDR + ctru_sys::OS_VRAM_SIZE).contains(&vaddr)
 }
 
 fn bytes_per_pixel(fmt: ColourFormat) -> usize {

@@ -38,12 +38,12 @@ impl Instance {
     /// This also initializes `citro3d` since it is required for `citro2d`.
     pub fn new() -> Result<Self> {
         let citro3d_instance = citro3d::Instance::new().expect("failed to initialize Citro3D");
-        let citro2d = Self::with_max_objects(
-            C2D_DEFAULT_MAX_OBJECTS.try_into().unwrap(),
-            citro3d_instance,
-        );
+        
 
-        citro2d
+        Self::with_max_objects(
+            C2D_DEFAULT_MAX_OBJECTS.into(),
+            citro3d_instance,
+        )
     }
 
     /// You have to initialize citro3d before using citro2d, but some cases you may
@@ -53,7 +53,7 @@ impl Instance {
     /// but currently working on that assumption and to allow for flexibility for the developer
     pub fn new_without_c3d_init(citro3d_instance: citro3d::Instance) -> Result<Self> {
         Self::with_max_objects(
-            C2D_DEFAULT_MAX_OBJECTS.try_into().unwrap(),
+            C2D_DEFAULT_MAX_OBJECTS.into(),
             citro3d_instance,
         )
     }
@@ -67,7 +67,7 @@ impl Instance {
     ) -> Result<Self> {
         let new_citro_2d = match unsafe { citro2d_sys::C2D_Init(max_objects) } {
             true => Ok(Self {
-                citro3d_instance: citro3d_instance,
+                citro3d_instance,
             }),
             false => Err(Error::FailedToInitialize),
         };
