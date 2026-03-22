@@ -7,6 +7,11 @@ use crate::pixel_type::PixelType;
 pub struct Tex(pub(crate) citro3d_sys::C3D_Tex);
 
 impl Tex {
+    pub fn size(&self) -> (u16, u16) {
+        let dims = unsafe { self.0.__bindgen_anon_2.__bindgen_anon_1 };
+        (dims.width, dims.height)
+    }
+
     #[doc(alias = "C3D_TexInit")]
     pub fn new(width: u16, height: u16, format: ColourFormat) -> Self {
         let width = (width + 7) & !7;
