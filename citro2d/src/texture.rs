@@ -170,6 +170,33 @@ impl Tex {
             &mut *(raw_data_ptr as *mut [T; 64])
         }
     }
+
+    pub fn raw_texture<T: PixelType>(&self) -> &[T] {
+        debug_assert!(!addr_is_vram(unsafe { self.0.__bindgen_anon_1.data }));
+
+        unsafe {
+            let dims = self.0.__bindgen_anon_2.__bindgen_anon_1;
+            let n = dims.width as usize * dims.height as usize;
+            let raw_data_ptr = citro3d_sys::C3D_Tex2DGetImagePtr(
+                &raw const self.0 as *mut _,
+                0,
+                std::ptr::null_mut(),
+            );
+            std::slice::from_raw_parts(raw_data_ptr as *const T, n)
+        }
+    }
+
+    pub fn raw_texture_mut<T: PixelType>(&mut self) -> &mut [T] {
+        debug_assert!(!addr_is_vram(unsafe { self.0.__bindgen_anon_1.data }));
+
+        unsafe {
+            let dims = self.0.__bindgen_anon_2.__bindgen_anon_1;
+            let n = dims.width as usize * dims.height as usize;
+            let raw_data_ptr =
+                citro3d_sys::C3D_Tex2DGetImagePtr(&raw mut self.0, 0, std::ptr::null_mut());
+            std::slice::from_raw_parts_mut(raw_data_ptr as *mut T, n)
+        }
+    }
 }
 
 #[doc(alias = "addrIsVRAM")]
