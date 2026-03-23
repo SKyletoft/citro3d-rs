@@ -229,6 +229,28 @@ impl From<Mirroring> for (f32, f32, f32, f32) {
     }
 }
 
+impl Mirroring {
+    pub fn top(&self) -> f32 {
+        let (_, top, _, _) = self.clone().into();
+        top
+    }
+
+    pub fn bottom(&self) -> f32 {
+        let (_, _, _, bottom) = self.clone().into();
+        bottom
+    }
+
+    pub fn left(&self) -> f32 {
+        let (left, _, _, _) = self.clone().into();
+        left
+    }
+
+    pub fn right(&self) -> f32 {
+        let (_, _, right, _) = self.clone().into();
+        right
+    }
+}
+
 impl Shape for Sprite {
     #[doc(alias = "C2D_DrawSprite")]
     fn render(&self) -> bool {
