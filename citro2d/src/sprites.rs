@@ -168,7 +168,7 @@ impl Sprite {
         }
     }
 
-    pub fn set_mirroring(&mut self, mirroring: Mirroring) {
+    pub fn set_mirroring(&mut self, mirroring: &Mirroring) {
         let subtex = unsafe { &mut *(self.0.image.subtex as *mut citro2d_sys::Tex3DS_SubTexture) };
         let (left, top, right, bottom) = mirroring.into();
         subtex.left = left;
@@ -177,7 +177,7 @@ impl Sprite {
         subtex.bottom = bottom;
     }
 
-    pub fn with_mirroring(mut self, mirroring: Mirroring) -> Self {
+    pub fn with_mirroring(mut self, mirroring: &Mirroring) -> Self {
         self.set_mirroring(mirroring);
         self
     }
@@ -212,8 +212,8 @@ pub enum Mirroring {
     },
 }
 
-impl From<Mirroring> for (f32, f32, f32, f32) {
-    fn from(mirroring: Mirroring) -> Self {
+impl From<&Mirroring> for (f32, f32, f32, f32) {
+    fn from(mirroring: &Mirroring) -> Self {
         match mirroring {
             Mirroring::Normal => (0., 1., 1., 0.),
             Mirroring::MirrorX => (1., 1., 0., 0.),
@@ -224,29 +224,29 @@ impl From<Mirroring> for (f32, f32, f32, f32) {
                 top,
                 right,
                 bottom,
-            } => (left, top, right, bottom),
+            } => (*left, *top, *right, *bottom),
         }
     }
 }
 
 impl Mirroring {
     pub fn top(&self) -> f32 {
-        let (_, top, _, _) = self.clone().into();
+        let (_, top, _, _) = self.into();
         top
     }
 
     pub fn bottom(&self) -> f32 {
-        let (_, _, _, bottom) = self.clone().into();
+        let (_, _, _, bottom) = self.into();
         bottom
     }
 
     pub fn left(&self) -> f32 {
-        let (left, _, _, _) = self.clone().into();
+        let (left, _, _, _) = self.into();
         left
     }
 
     pub fn right(&self) -> f32 {
-        let (_, _, right, _) = self.clone().into();
+        let (_, _, right, _) = self.into();
         right
     }
 }
