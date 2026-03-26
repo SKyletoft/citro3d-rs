@@ -9,6 +9,7 @@ pub struct MultiColor {
     pub bottom_left: Color,
     pub bottom_right: Color,
 }
+pub use MultiColor as MultiColour;
 
 /// A trait to help render all 2D shapes supported by citro2d
 pub trait Shape {
