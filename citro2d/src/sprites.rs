@@ -23,12 +23,13 @@ impl Sprite {
         Sprite::from_tex(Tex::new(32, 32, ColourFormat::Rgb565))
     }
 
-    pub fn from_tex(tex: Tex) -> Self {
+    pub fn from_shared_tex(tex: Rc<Tex>) -> Self {
         let width = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
         let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
 
-        let tex = Rc::into_raw(Rc::new(tex.0)) as *mut citro3d_sys::C3D_Tex;
+        let tex = Rc::into_raw(tex) as *mut citro3d_sys::C3D_Tex;
         debug_assert!(!tex.is_null());
+
         let subtex = Box::leak(Box::new(Tex3DS_SubTexture {
             width: width as u16,
             height: height as u16,
@@ -57,6 +58,10 @@ impl Sprite {
             params: c2d_drawparams,
         };
         Self(inner)
+    }
+
+    pub fn from_tex(tex: Tex) -> Self {
+        Self::from_shared_tex(Rc::new(tex))
     }
 
     pub fn pos(&self) -> (f32, f32) {
@@ -152,7 +157,13 @@ impl Sprite {
         self.centre_mut()
     }
 
-    pub fn texture(&self) -> &Tex {
+    pub fn texture(&self) -> Rc<Tex> {
+        let rc = unsafe { Rc::from_raw(self.0.image.tex as *const Tex) };
+        let ret = rc.clone();
+        std::mem::forget(rc);
+        ret
+    }
+    pub fn texture_ref(&self) -> &Tex {
         debug_assert!(!self.0.image.tex.is_null());
         unsafe { &*(self.0.image.tex as *const Tex) }
     }
