@@ -190,7 +190,13 @@ impl Shape for CircleSolid {
     #[doc(alias = "C2D_DrawCircleSolid")]
     fn render(&self) -> bool {
         unsafe {
-            citro2d_sys::C2D_DrawCircleSolid(self.x, self.y, self.z, self.radius, self.colour.into())
+            citro2d_sys::C2D_DrawCircleSolid(
+                self.x,
+                self.y,
+                self.z,
+                self.radius,
+                self.colour.into(),
+            )
         }
     }
 }
