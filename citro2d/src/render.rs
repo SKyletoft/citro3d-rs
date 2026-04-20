@@ -14,12 +14,12 @@ pub use Color as Colour;
 
 impl Color {
     /// Create a new color with the given RGB values. Alpha is set to 255 (fully opaque).
-    pub fn new(r: u8, g: u8, b: u8) -> Self {
+    pub const fn new(r: u8, g: u8, b: u8) -> Self {
         Self::new_with_alpha(r, g, b, 255)
     }
 
     /// Create a new color with the given RGBA values.
-    pub fn new_with_alpha(r: u8, g: u8, b: u8, a: u8) -> Self {
+    pub const fn new_with_alpha(r: u8, g: u8, b: u8, a: u8) -> Self {
         let inner = r as u32 | (g as u32) << 8 | (b as u32) << 16 | (a as u32) << 24;
         Self { inner }
     }

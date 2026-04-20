@@ -16,10 +16,10 @@ pub struct Projection<Kind> {
 }
 
 impl<Kind> Projection<Kind> {
-    fn new(inner: Kind) -> Self {
+    const fn new(inner: Kind) -> Self {
         Self {
-            coordinates: CoordinateOrientation::default(),
-            rotation: ScreenOrientation::default(),
+            coordinates: CoordinateOrientation::RightHanded,
+            rotation: ScreenOrientation::Rotated,
             inner,
         }
     }
@@ -354,7 +354,7 @@ impl StereoDisplacement {
     ///
     /// See struct documentation for details about the
     /// [`screen_depth`](Self::screen_depth) parameter.
-    pub fn new(interocular_distance: f32, screen_depth: f32) -> (Self, Self) {
+    pub const fn new(interocular_distance: f32, screen_depth: f32) -> (Self, Self) {
         let displacement = interocular_distance.abs() / 2.0;
 
         let left_eye = Self {

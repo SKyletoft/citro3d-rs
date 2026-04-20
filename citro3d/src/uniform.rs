@@ -11,7 +11,7 @@ use crate::{shader, Frame};
 pub struct Index(u8);
 
 impl Index {
-    pub fn inner(&self) -> u8 {
+    pub const fn inner(&self) -> u8 {
         self.0
     }
 }

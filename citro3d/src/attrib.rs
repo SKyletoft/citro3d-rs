@@ -26,9 +26,9 @@ impl Register {
     /// # Errors
     ///
     /// Returns an error for `n >= 16`.
-    pub fn new(n: u16) -> crate::Result<Self> {
+    pub const fn new(n: u16) -> crate::Result<Self> {
         if n < 16 {
-            Ok(Self(n.into()))
+            Ok(Self(n as libc::c_int))
         } else {
             Err(crate::Error::TooManyAttributes)
         }

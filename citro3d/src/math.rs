@@ -28,19 +28,19 @@ impl IVec {
     pub fn new(x: u8, y: u8, z: u8, w: u8) -> Self {
         Self(unsafe { citro3d_sys::IVec_Pack(x, y, z, w) })
     }
-    pub fn as_raw(&self) -> &citro3d_sys::C3D_IVec {
+    pub const fn as_raw(&self) -> &citro3d_sys::C3D_IVec {
         &self.0
     }
-    pub fn x(self) -> u8 {
+    pub const fn x(self) -> u8 {
         self.0 as u8
     }
-    pub fn y(self) -> u8 {
+    pub const fn y(self) -> u8 {
         (self.0 >> 8) as u8
     }
-    pub fn z(self) -> u8 {
+    pub const fn z(self) -> u8 {
         (self.0 >> 16) as u8
     }
-    pub fn w(self) -> u8 {
+    pub const fn w(self) -> u8 {
         (self.0 >> 24) as u8
     }
 }

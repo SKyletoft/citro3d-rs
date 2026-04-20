@@ -61,13 +61,13 @@ impl LightIndex {
     ///
     /// # Panics
     /// if `idx` out of range for the number of lights (>=8)
-    pub fn new(idx: usize) -> Self {
+    pub const fn new(idx: usize) -> Self {
         assert!(idx < NB_LIGHTS);
         Self(idx as u8)
     }
 
     /// Converts the index back into a raw integer.
-    pub fn as_usize(self) -> usize {
+    pub const fn as_usize(self) -> usize {
         self.0 as usize
     }
 }
@@ -310,12 +310,12 @@ impl LightEnv {
 }
 
 impl Light {
-    fn new(raw: citro3d_sys::C3D_Light) -> Self {
+    const fn new(raw: citro3d_sys::C3D_Light) -> Self {
         Self {
             raw,
             spotlight: None,
             distance_attenuation: None,
-            _pin: Default::default(),
+            _pin: PhantomPinned,
         }
     }
 

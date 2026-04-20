@@ -20,21 +20,21 @@ impl Matrix4 {
     ///
     /// # Note
     /// This expects rows to be in WZYX order
-    pub fn from_cells_wzyx(cells: [f32; 16]) -> Self {
+    pub const fn from_cells_wzyx(cells: [f32; 16]) -> Self {
         Self(citro3d_sys::C3D_Mtx { m: cells })
     }
     /// Construct a Matrix4 from its rows
-    pub fn from_rows(rows: [FVec4; 4]) -> Self {
+    pub const fn from_rows(rows: [FVec4; 4]) -> Self {
         Self(citro3d_sys::C3D_Mtx {
-            r: rows.map(|r| r.0),
+            r: [rows[0].0, rows[1].0, rows[2].0, rows[3].0],
         })
     }
     /// Create a new matrix from a raw citro3d_sys one
-    pub fn from_raw(value: citro3d_sys::C3D_Mtx) -> Self {
+    pub const fn from_raw(value: citro3d_sys::C3D_Mtx) -> Self {
         Self(value)
     }
 
-    pub fn as_raw(&self) -> &citro3d_sys::C3D_Mtx {
+    pub const fn as_raw(&self) -> &citro3d_sys::C3D_Mtx {
         &self.0
     }
 
@@ -42,7 +42,7 @@ impl Matrix4 {
         &mut self.0
     }
 
-    pub fn into_raw(self) -> citro3d_sys::C3D_Mtx {
+    pub const fn into_raw(self) -> citro3d_sys::C3D_Mtx {
         self.0
     }
 

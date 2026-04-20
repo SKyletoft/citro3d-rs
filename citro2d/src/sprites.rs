@@ -241,24 +241,36 @@ impl From<&Mirroring> for (f32, f32, f32, f32) {
 }
 
 impl Mirroring {
-    pub fn top(&self) -> f32 {
-        let (_, top, _, _) = self.into();
-        top
+    pub const fn top(&self) -> f32 {
+        match self {
+            Mirroring::Normal | Mirroring::MirrorX => 1.,
+            Mirroring::MirrorY | Mirroring::MirrorXY => 0.,
+            Mirroring::Custom { top, .. } => *top,
+        }
     }
 
     pub fn bottom(&self) -> f32 {
-        let (_, _, _, bottom) = self.into();
-        bottom
+        match self {
+            Mirroring::Normal | Mirroring::MirrorX => 0.,
+            Mirroring::MirrorY | Mirroring::MirrorXY => 1.,
+            Mirroring::Custom { bottom, .. } => *bottom,
+        }
     }
 
     pub fn left(&self) -> f32 {
-        let (left, _, _, _) = self.into();
-        left
+        match self {
+            Mirroring::Normal | Mirroring::MirrorY => 0.,
+            Mirroring::MirrorX | Mirroring::MirrorXY => 1.,
+            Mirroring::Custom { left, .. } => *left,
+        }
     }
 
     pub fn right(&self) -> f32 {
-        let (_, _, right, _) = self.into();
-        right
+        match self {
+            Mirroring::Normal | Mirroring::MirrorY => 1.,
+            Mirroring::MirrorX | Mirroring::MirrorXY => 0.,
+            Mirroring::Custom { right, .. } => *right,
+        }
     }
 }
 

@@ -10,17 +10,17 @@ pub struct Color {
 pub use Color as Colour;
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32) -> Self {
+    pub const fn new(r: f32, g: f32, b: f32) -> Self {
         Self { r, g, b }
     }
 
     /// Splits the color into RGB ordered parts.
-    pub fn to_parts_rgb(self) -> [f32; 3] {
+    pub const fn to_parts_rgb(self) -> [f32; 3] {
         [self.r, self.g, self.b]
     }
 
     /// Splits the color into BGR ordered parts.
-    pub fn to_parts_bgr(self) -> [f32; 3] {
+    pub const fn to_parts_bgr(self) -> [f32; 3] {
         [self.b, self.g, self.r]
     }
 }

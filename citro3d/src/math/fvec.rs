@@ -56,7 +56,7 @@ impl FVec4 {
     }
 
     /// Wrap a raw [`citro3d_sys::C3D_FVec`]
-    pub fn from_raw(raw: citro3d_sys::C3D_FVec) -> Self {
+    pub const fn from_raw(raw: citro3d_sys::C3D_FVec) -> Self {
         Self(raw)
     }
 
