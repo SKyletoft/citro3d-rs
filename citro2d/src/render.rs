@@ -3,7 +3,7 @@ use std::cell::RefMut;
 
 use ctru::services::gfx::Screen;
 
-use crate::{Error, Result, shapes::Shape};
+use crate::{shapes::Shape, Error, Result};
 
 /// A color in RGBA format. The color is stored as a 32-bit integer
 #[derive(Debug, Clone, Copy, Default)]

@@ -4,7 +4,7 @@
 use std::ops::Range;
 
 use crate::math::{FVec4, IVec, Matrix4};
-use crate::{Frame, shader};
+use crate::{shader, Frame};
 
 /// The index of a uniform within a [`shader::Program`].
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
