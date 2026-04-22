@@ -18,6 +18,7 @@ pub mod error;
 pub mod pixel_type;
 pub mod render;
 pub mod shapes;
+pub mod sprite_alloc;
 pub mod sprites;
 pub mod texture;
 use citro2d_sys::C2D_DEFAULT_MAX_OBJECTS;

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{marker::PhantomData, rc::Rc};
 
 use citro2d_sys::{
     C2D_DrawParams, C2D_DrawParams__bindgen_ty_1, C2D_DrawParams__bindgen_ty_2, C2D_DrawSprite,
@@ -6,28 +6,38 @@ use citro2d_sys::{
 };
 use citro3d::texture::ColourFormat;
 
-use crate::{shapes::Shape, texture::Tex};
+use crate::{
+    shapes::Shape,
+    sprite_alloc::{TexAlloc, TexCloneAlloc, TexMutAlloc, TexOwnedAlloc, TexReclaimAlloc},
+    texture::Tex,
+};
 
 #[doc(alias = "C2D_Sprite")]
 #[repr(transparent)]
-pub struct Sprite(pub(crate) C2D_Sprite);
+pub struct Sprite<A: TexAlloc = Rc<Tex>>(pub(crate) C2D_Sprite, PhantomData<A>);
 
-impl Default for Sprite {
+impl<A: TexOwnedAlloc> Default for Sprite<A> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Sprite {
+impl<A: TexOwnedAlloc> Sprite<A> {
     pub fn new() -> Self {
-        Sprite::from_tex(Tex::new(32, 32, ColourFormat::Rgb565))
+        Self::from_tex(Tex::new(32, 32, ColourFormat::Rgb565))
     }
 
-    pub fn from_shared_tex(tex: Rc<Tex>) -> Self {
-        let width = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
-        let height = unsafe { tex.0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
+    pub fn from_tex(tex: Tex) -> Self {
+        Self::from_shared_tex(A::from_tex(tex))
+    }
+}
 
-        let tex = Rc::into_raw(tex) as *mut citro3d_sys::C3D_Tex;
+impl<A: TexAlloc> Sprite<A> {
+    pub fn from_shared_tex(tex: A) -> Self {
+        let width = unsafe { tex.as_tex().0.__bindgen_anon_2.__bindgen_anon_1.width } as f32;
+        let height = unsafe { tex.as_tex().0.__bindgen_anon_2.__bindgen_anon_1.height } as f32;
+
+        let tex = A::alloc(tex);
         debug_assert!(!tex.is_null());
 
         let subtex = Box::leak(Box::new(Tex3DS_SubTexture {
@@ -57,11 +67,7 @@ impl Sprite {
             image: c2d_image,
             params: c2d_drawparams,
         };
-        Self(inner)
-    }
-
-    pub fn from_tex(tex: Tex) -> Self {
-        Self::from_shared_tex(Rc::new(tex))
+        Self(inner, PhantomData)
     }
 
     pub fn pos(&self) -> (f32, f32) {
@@ -157,26 +163,9 @@ impl Sprite {
         self.centre_mut()
     }
 
-    pub fn texture(&self) -> Rc<Tex> {
-        let rc = unsafe { Rc::from_raw(self.0.image.tex as *const Tex) };
-        let ret = rc.clone();
-        std::mem::forget(rc);
-        ret
-    }
     pub fn texture_ref(&self) -> &Tex {
         debug_assert!(!self.0.image.tex.is_null());
         unsafe { &*(self.0.image.tex as *const Tex) }
-    }
-    pub fn texture_mut(&mut self) -> Option<&mut Tex> {
-        debug_assert!(!self.0.image.tex.is_null());
-        let rc = unsafe { Rc::from_raw(self.0.image.tex as *const Tex) };
-        let can_mutate = Rc::strong_count(&rc) == 1 && Rc::weak_count(&rc) == 0;
-        std::mem::forget(rc);
-        if can_mutate {
-            unsafe { Some(&mut *(self.0.image.tex as *mut Tex)) }
-        } else {
-            None
-        }
     }
 
     pub fn set_mirroring(&mut self, mirroring: &Mirroring) {
@@ -192,17 +181,30 @@ impl Sprite {
         self.set_mirroring(mirroring);
         self
     }
+}
 
-    pub fn destruct(self) -> (Rc<Tex>, Box<Tex3DS_SubTexture>) {
-        let C2D_Sprite {
-            image: C2D_Image { tex, subtex },
-            ..
-        } = self.0;
+impl<A: TexCloneAlloc> Sprite<A> {
+    pub fn texture(&self) -> A {
+        unsafe { A::clone(self.0.image.tex) }
+    }
+}
+
+impl<A: TexMutAlloc> Sprite<A> {
+    pub fn texture_mut(&mut self) -> Option<&mut Tex> {
+        debug_assert!(!self.0.image.tex.is_null());
+        unsafe { A::texture_mut(self.0.image.tex) }
+    }
+}
+
+impl<A: TexReclaimAlloc> Sprite<A> {
+    pub fn destruct(self) -> (A, Box<Tex3DS_SubTexture>) {
+        let C2D_Image { tex, subtex } = self.0.image;
+        std::mem::forget(self);
         debug_assert!(!tex.is_null());
         debug_assert!(!subtex.is_null());
         unsafe {
             (
-                Rc::from_raw(tex as *const Tex),
+                A::from_raw(tex),
                 Box::from_raw(subtex as *mut Tex3DS_SubTexture),
             )
         }
@@ -274,14 +276,14 @@ impl Mirroring {
     }
 }
 
-impl Shape for Sprite {
+impl<A: TexAlloc> Shape for Sprite<A> {
     #[doc(alias = "C2D_DrawSprite")]
     fn render(&self) -> bool {
         unsafe { C2D_DrawSprite(&raw const self.0 as *mut C2D_Sprite) }
     }
 }
 
-impl Drop for Sprite {
+impl<A: TexAlloc> Drop for Sprite<A> {
     fn drop(&mut self) {
         let C2D_Sprite {
             image: C2D_Image { tex, subtex },
@@ -290,7 +292,7 @@ impl Drop for Sprite {
         debug_assert!(!tex.is_null());
         debug_assert!(!subtex.is_null());
         unsafe {
-            let _ = Rc::from_raw(tex);
+            A::free(tex);
             let _ = Box::from_raw(subtex as *mut Tex3DS_SubTexture);
         }
     }
